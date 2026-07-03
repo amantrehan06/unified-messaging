@@ -67,18 +67,22 @@ class RlsIsolationTest {
     @Test
     void positive_seeOwnRows() throws Exception {
         try (Connection conn = appUserConnection()) {
+            conn.setAutoCommit(false);
             setTenant(conn, tenantA);
             List<String> bodies = queryNotes(conn);
             assertThat(bodies).containsExactlyInAnyOrder("Note A1", "Note A2");
+            conn.rollback();
         }
     }
 
     @Test
     void crossTenant_cannotReadOtherTenantRows() throws Exception {
         try (Connection conn = appUserConnection()) {
+            conn.setAutoCommit(false);
             setTenant(conn, tenantA);
             List<String> bodies = queryNotes(conn);
             assertThat(bodies).doesNotContain("Note B1");
+            conn.rollback();
         }
     }
 
@@ -86,10 +90,12 @@ class RlsIsolationTest {
     void adversarial_noWhereClauseStillFiltered() throws Exception {
         // Query has no WHERE tenant_id - RLS must still filter
         try (Connection conn = appUserConnection()) {
+            conn.setAutoCommit(false);
             setTenant(conn, tenantB);
             List<String> bodies = queryNotes(conn);
             assertThat(bodies).containsExactly("Note B1");
             assertThat(bodies).doesNotContain("Note A1", "Note A2");
+            conn.rollback();
         }
     }
 
@@ -97,6 +103,21 @@ class RlsIsolationTest {
     void noContext_noRowsLeak() throws Exception {
         // app.current_tenant is not set - should see zero rows (fail closed)
         try (Connection conn = appUserConnection()) {
+            List<String> bodies = queryNotes(conn);
+            assertThat(bodies).isEmpty();
+        }
+    }
+
+    @Test
+    void setLocalClearedAfterTransaction() throws Exception {
+        // Proves SET LOCAL is transaction-scoped: tenant setting does not leak
+        try (Connection conn = appUserConnection()) {
+            conn.setAutoCommit(false);
+            setTenant(conn, tenantA);
+            assertThat(queryNotes(conn)).isNotEmpty();
+            conn.commit();
+
+            // After commit, SET LOCAL is gone - should see zero rows
             List<String> bodies = queryNotes(conn);
             assertThat(bodies).isEmpty();
         }
@@ -128,7 +149,7 @@ class RlsIsolationTest {
 
     private static void setTenant(Connection conn, UUID tenantId) throws Exception {
         try (Statement stmt = conn.createStatement()) {
-            stmt.execute("SET app.current_tenant = '" + tenantId + "'");
+            stmt.execute("SET LOCAL app.current_tenant = '" + tenantId + "'");
         }
     }
 
