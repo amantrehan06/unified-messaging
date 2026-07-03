@@ -1,8 +1,19 @@
+jwt:
+  secret: ${JWT_SECRET}
+
 spring:
   datasource:
     url: ${NEON_JDBC_URL}
     username: ${NEON_USERNAME}
     password: ${NEON_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: none
+  flyway:
+    url: ${NEON_JDBC_URL}
+    user: ${NEON_MIGRATION_USERNAME}
+    password: ${NEON_MIGRATION_PASSWORD}
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
