@@ -1,0 +1,12 @@
+package com.messaging.ingestion;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ContactRepository extends JpaRepository<Contact, UUID> {
+
+    Optional<Contact> findByTenantIdAndChannelTypeAndExternalIdentity(
+            UUID tenantId, String channelType, String externalIdentity);
+}
