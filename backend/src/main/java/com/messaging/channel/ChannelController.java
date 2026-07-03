@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import com.messaging.channel.UnipileClient.HostedAuthRequest;
 import com.messaging.web.AuthenticatedUser;
 
 @RestController
+@ConditionalOnProperty(prefix = "unipile", name = "dsn")
 public class ChannelController {
 
     private final ChannelRepository channelRepository;

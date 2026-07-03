@@ -2,9 +2,9 @@ jwt:
   secret: ${JWT_SECRET}
 
 unipile:
-  dsn: ${UNIPILE_DSN}
-  api-key: ${UNIPILE_API_KEY}
-  webhook-secret: ${UNIPILE_WEBHOOK_SECRET}
+  dsn: ${UNIPILE_DSN:}
+  api-key: ${UNIPILE_API_KEY:}
+  webhook-secret: ${UNIPILE_WEBHOOK_SECRET:}
 
 spring:
   datasource:
