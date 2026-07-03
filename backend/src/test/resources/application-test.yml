@@ -16,3 +16,8 @@ spring:
 
 jwt:
   secret: test-secret-key-that-is-at-least-32-bytes-long-for-hmac-sha256
+
+unipile:
+  dsn: http://localhost:${wiremock.server.port:9999}
+  api-key: test-unipile-api-key
+  webhook-secret: test-webhook-secret

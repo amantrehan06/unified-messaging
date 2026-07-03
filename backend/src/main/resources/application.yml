@@ -7,6 +7,10 @@ spring:
       ddl-auto: none
     open-in-view: false
 
+app:
+  backend-base-url: http://localhost:8080
+  frontend-base-url: http://localhost:5173
+
 management:
   endpoints:
     web:

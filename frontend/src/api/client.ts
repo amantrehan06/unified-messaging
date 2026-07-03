@@ -47,3 +47,50 @@ export async function fetchMe(): Promise<MeResponse> {
 export function getGoogleLoginUrl(): string {
   return `${BASE_URL}/oauth2/authorization/google`;
 }
+
+export interface ChannelResponse {
+  id: string;
+  type: string;
+  provider: string;
+  status: string;
+  externalAccountId: string | null;
+  connectedAt: string | null;
+  lastStatusAt: string | null;
+}
+
+export async function fetchChannels(): Promise<ChannelResponse[]> {
+  const res = await fetch(`${BASE_URL}/api/channels`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch channels: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function connectChannel(
+  type: string
+): Promise<{ url: string }> {
+  const res = await fetch(`${BASE_URL}/api/channels/connect`, {
+    method: "POST",
+    headers: { ...authHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify({ type }),
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to connect channel: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function reconnectChannel(
+  channelId: string
+): Promise<{ url: string }> {
+  const res = await fetch(`${BASE_URL}/api/channels/${channelId}/reconnect`, {
+    method: "POST",
+    headers: authHeaders(),
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to reconnect channel: ${res.status}`);
+  }
+  return res.json();
+}
