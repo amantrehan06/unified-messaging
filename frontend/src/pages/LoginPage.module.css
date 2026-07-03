@@ -1,0 +1,91 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--page);
+  padding: 1rem;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--indigo);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.title {
+  font-family: 'Plus Jakarta Sans', var(--font-body);
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: var(--ink-2);
+  font-size: 0.938rem;
+  margin: 0 0 2rem;
+  line-height: 1.5;
+}
+
+.googleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-family: 'Inter', var(--font-body);
+  font-size: 0.938rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.googleBtn:hover {
+  border-color: var(--ink-3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.demoBtn {
+  display: block;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 11px;
+  border: none;
+  background: var(--indigo);
+  color: #fff;
+  font-family: 'Inter', var(--font-body);
+  font-size: 0.938rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.demoBtn:hover {
+  background: var(--indigo-600);
+}

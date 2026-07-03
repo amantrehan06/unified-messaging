@@ -22,6 +22,12 @@ trap cleanup EXIT
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 
+# 0. Kill any existing processes on ports 8080 and 5173
+echo "=== Stopping existing services ==="
+lsof -ti :8080 | xargs kill -9 2>/dev/null && echo "Killed process on port 8080" || true
+lsof -ti :5173 | xargs kill -9 2>/dev/null && echo "Killed process on port 5173" || true
+sleep 1
+
 # 1. Backend build
 echo "=== Building backend ==="
 cd "$ROOT/backend"

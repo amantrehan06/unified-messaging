@@ -1,0 +1,213 @@
+.composer {
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  padding: 0.75rem 1.25rem 1rem;
+}
+
+.assistNote {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+.assistNoteIcon {
+  color: var(--indigo);
+  flex-shrink: 0;
+}
+
+.draftCard {
+  background: var(--peri-soft);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.draftHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.5rem;
+  color: var(--indigo);
+}
+
+.draftBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 6px;
+  background: var(--indigo);
+  color: #fff;
+  font-size: 0.688rem;
+  font-weight: 700;
+}
+
+.draftLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--indigo);
+}
+
+.draftReason {
+  font-size: 0.688rem;
+  color: var(--ink-3);
+  margin-left: auto;
+}
+
+.draftBody {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.draftActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.draftSend,
+.draftEdit,
+.draftDismiss {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.813rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.draftSend {
+  background: var(--indigo);
+  color: #fff;
+}
+
+.draftEdit {
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.draftDismiss {
+  background: transparent;
+  color: var(--ink-3);
+  margin-left: auto;
+}
+
+.draftSend:hover,
+.draftEdit:hover,
+.draftDismiss:hover {
+  opacity: 0.85;
+}
+
+.inputRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.inputWrap {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem 0.375rem 0.375rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--page);
+  transition: border-color 0.15s;
+}
+
+.inputWrap:focus-within {
+  border-color: var(--peri);
+}
+
+.channelPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.688rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.input {
+  flex: 1;
+  padding: 0.375rem 0.375rem;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', var(--font-body);
+  font-size: 0.875rem;
+  color: var(--ink);
+  resize: none;
+  outline: none;
+  min-height: 32px;
+}
+
+.input::placeholder {
+  color: var(--ink-3);
+}
+
+.modeToggle {
+  display: flex;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--page);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.modeBtn {
+  padding: 0.375rem 0.625rem;
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.modeActive {
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.sendBtn {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 11px;
+  border: none;
+  background: var(--indigo);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: var(--indigo-600);
+}
+
+.sendBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
