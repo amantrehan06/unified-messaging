@@ -1,0 +1,26 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--page);
+}
+
+.threadPane {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+}
+
+.fullPane {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.emptyState {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  font-size: 0.938rem;
+}
