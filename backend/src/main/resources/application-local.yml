@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: ${NEON_JDBC_URL}
+    username: ${NEON_USERNAME}
+    password: ${NEON_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
