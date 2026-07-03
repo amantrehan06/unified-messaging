@@ -1,5 +1,6 @@
 package com.messaging.channel;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +23,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.messaging.tenant.Tenant;
+import com.messaging.tenant.TenantContext;
 import com.messaging.tenant.TenantRepository;
 import com.messaging.web.JwtService;
 
@@ -37,6 +40,9 @@ class ChannelEndpointTest {
 
     @Autowired
     private TenantRepository tenantRepository;
+
+    @Autowired
+    private ChannelRepository channelRepository;
 
     @MockitoBean
     private UnipileClient unipileClient;
@@ -146,5 +152,62 @@ class ChannelEndpointTest {
                                 {"status": "UNKNOWN", "account_id": "x", "name": "%s"}
                                 """.formatted(UUID.randomUUID())))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void forgedNotifyCallback_writesNothing() throws Exception {
+        // Seed a pending channel for a real tenant
+        try {
+            TenantContext.set(tenantId);
+            Channel pending = new Channel(tenantId, "whatsapp");
+            channelRepository.save(pending);
+            UUID channelId = pending.getId();
+
+            // Forged callback: valid payload but wrong secret
+            mockMvc.perform(post("/api/unipile/notify")
+                            .param("secret", "forged-secret")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""
+                                    {"status": "CREATION_SUCCESS", "account_id": "attacker-acc", "name": "%s"}
+                                    """.formatted(tenantId)))
+                    .andExpect(status().isUnauthorized());
+
+            // Channel must still be pending - no DB mutation happened
+            Optional<Channel> after = channelRepository.findById(channelId);
+            assertThat(after).isPresent();
+            assertThat(after.get().getStatus()).isEqualTo("pending");
+            assertThat(after.get().getExternalAccountId()).isNull();
+        } finally {
+            TenantContext.clear();
+        }
+    }
+
+    @Test
+    void forgedStatusWebhook_writesNothing() throws Exception {
+        // Seed a connected channel
+        try {
+            TenantContext.set(tenantId);
+            Channel connected = new Channel(tenantId, "whatsapp");
+            connected.setExternalAccountId("real-acc-for-forge-test");
+            connected.setStatus("connected");
+            channelRepository.save(connected);
+            UUID channelId = connected.getId();
+
+            // Forged status webhook: valid payload but wrong secret
+            mockMvc.perform(post("/api/unipile/account-status")
+                            .param("secret", "forged-secret")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""
+                                    {"AccountStatus": {"account_id": "real-acc-for-forge-test", "account_type": "WHATSAPP", "message": "ERROR"}}
+                                    """))
+                    .andExpect(status().isUnauthorized());
+
+            // Channel must still be connected - no status change
+            Optional<Channel> after = channelRepository.findById(channelId);
+            assertThat(after).isPresent();
+            assertThat(after.get().getStatus()).isEqualTo("connected");
+        } finally {
+            TenantContext.clear();
+        }
     }
 }

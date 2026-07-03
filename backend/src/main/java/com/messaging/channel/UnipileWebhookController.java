@@ -1,5 +1,7 @@
 package com.messaging.channel;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Map;
 import java.util.UUID;
 
@@ -37,7 +39,7 @@ public class UnipileWebhookController {
     @PostMapping("/api/unipile/notify")
     public ResponseEntity<Void> notify(@RequestParam("secret") String secret,
                                         @RequestBody NotifyPayload payload) {
-        if (!webhookSecret.equals(secret)) {
+        if (!constantTimeEquals(webhookSecret, secret)) {
             log.warn("Rejected notify callback: invalid secret");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -66,7 +68,7 @@ public class UnipileWebhookController {
     @PostMapping("/api/unipile/account-status")
     public ResponseEntity<Void> accountStatus(@RequestParam("secret") String secret,
                                                @RequestBody Map<String, Map<String, String>> body) {
-        if (!webhookSecret.equals(secret)) {
+        if (!constantTimeEquals(webhookSecret, secret)) {
             log.warn("Rejected account-status webhook: invalid secret");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -93,6 +95,12 @@ public class UnipileWebhookController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    private static boolean constantTimeEquals(String expected, String actual) {
+        byte[] a = expected.getBytes(StandardCharsets.UTF_8);
+        byte[] b = actual.getBytes(StandardCharsets.UTF_8);
+        return MessageDigest.isEqual(a, b);
     }
 
     record NotifyPayload(
