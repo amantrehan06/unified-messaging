@@ -72,22 +72,28 @@ export async function fetchMessages(conversationId: string, cursor?: string): Pr
   return apiFetch(`/api/conversations/${conversationId}/messages${qs}`);
 }
 
-export async function sendReply(conversationId: string, body: string): Promise<Message> {
+export async function sendReply(conversationId: string, body: string, idempotencyKey: string): Promise<Message> {
   if (USE_MOCK) return mock.sendReply(conversationId, body);
-  return apiFetch(`/api/conversations/${conversationId}/reply`, { method: 'POST', body: JSON.stringify({ body }) });
+  return apiFetch(`/api/conversations/${conversationId}/reply`, {
+    method: 'POST',
+    body: JSON.stringify({ body, idempotencyKey }),
+  });
 }
 
 export async function fetchDraft(conversationId: string): Promise<Draft | null> {
   if (USE_MOCK) return mock.fetchDraft(conversationId);
-  return apiFetch(`/api/conversations/${conversationId}/draft`);
+  // Drafts not implemented in M3 (Silent mode only)
+  return null;
 }
 
 export async function fetchLabels(): Promise<Label[]> {
   if (USE_MOCK) return mock.fetchLabels();
-  return apiFetch('/api/labels');
+  // Labels not implemented in M3
+  return [];
 }
 
 export async function addLabel(conversationId: string, labelId: string): Promise<Label[]> {
   if (USE_MOCK) return mock.addLabel(conversationId, labelId);
-  return apiFetch(`/api/conversations/${conversationId}/labels`, { method: 'POST', body: JSON.stringify({ labelId }) });
+  // Labels not implemented in M3
+  return [];
 }

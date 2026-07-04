@@ -44,25 +44,41 @@ const HANDOFF_TEXT =
 export function ThreadView({ conversation }: ThreadViewProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState<Draft | null>(null);
-  const [assistMode, setAssistMode] = useState<AssistMode>('DRAFT');
+  const [assistMode, setAssistMode] = useState<AssistMode>('SILENT');
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchMessages(conversation.id).then((res) => setMessages(res.items));
     fetchDraft(conversation.id).then(setDraft);
+
+    const interval = setInterval(() => {
+      fetchMessages(conversation.id).then((res) => setMessages(res.items));
+    }, 3_000);
+    return () => clearInterval(interval);
   }, [conversation.id]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Idempotency key lives across retries: generated once per compose,
+  // cleared only after a successful send.
+  const idempotencyKeyRef = useRef(crypto.randomUUID());
+
   const handleSend = async (body: string) => {
     setSending(true);
-    const msg = await sendReply(conversation.id, body);
-    setMessages((prev) => [...prev, msg]);
-    setDraft(null);
-    setSending(false);
+    try {
+      const msg = await sendReply(conversation.id, body, idempotencyKeyRef.current);
+      setMessages((prev) => [...prev, msg]);
+      setDraft(null);
+      // New key for the next composed reply
+      idempotencyKeyRef.current = crypto.randomUUID();
+    } catch {
+      // Key is intentionally NOT rotated so a retry reuses it
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleDismissDraft = () => {

@@ -16,6 +16,16 @@ public interface UnipileClient {
      */
     String createHostedAuthLink(HostedAuthRequest request);
 
+    /**
+     * Sends a message via Unipile.
+     *
+     * @param accountId the Unipile account ID (from the connected channel)
+     * @param to        the recipient identifier (phone number, email, etc.)
+     * @param body      the message text
+     * @return the provider message ID assigned by Unipile
+     */
+    String sendMessage(String accountId, String to, String body);
+
     record HostedAuthRequest(
             String type,
             List<String> providers,

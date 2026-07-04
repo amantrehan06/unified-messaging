@@ -62,4 +62,26 @@ public class HttpUnipileClient implements UnipileClient {
         }
         return (String) response.get("url");
     }
+
+    @Override
+    public String sendMessage(String accountId, String to, String body) {
+        Map<String, Object> requestBody = Map.of(
+                "account_id", accountId,
+                "to", to,
+                "text", body
+        );
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> response = restClient.post()
+                .uri("/api/v1/messages")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(requestBody)
+                .retrieve()
+                .body(Map.class);
+
+        if (response == null || !response.containsKey("id")) {
+            throw new RuntimeException("Unipile did not return a message ID");
+        }
+        return (String) response.get("id");
+    }
 }
