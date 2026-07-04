@@ -1,7 +1,6 @@
 package com.messaging.outbound;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -59,7 +58,7 @@ public class OutboundService {
                            ChannelRepository channelRepo,
                            MessageRepository messageRepo,
                            EntityManager entityManager,
-                           Optional<UnipileClient> unipileClient,
+                           UnipileClient unipileClient,
                            PlatformTransactionManager txManager) {
         this.outboundRepo = outboundRepo;
         this.conversationRepo = conversationRepo;
@@ -67,7 +66,7 @@ public class OutboundService {
         this.channelRepo = channelRepo;
         this.messageRepo = messageRepo;
         this.entityManager = entityManager;
-        this.unipileClient = unipileClient.orElse(null);
+        this.unipileClient = unipileClient;
 
         this.requiresNewTx = new TransactionTemplate(txManager);
         this.requiresNewTx.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -153,9 +152,6 @@ public class OutboundService {
         Instant now = Instant.now();
         String providerMessageId;
         try {
-            if (unipileClient == null) {
-                throw new RuntimeException("Unipile client not configured");
-            }
             providerMessageId = unipileClient.sendMessage(phase1.accountId(), phase1.recipient(), body);
         } catch (Exception e) {
             log.error("Failed to send via Unipile: conversationId={}, idempotencyKey={}",
